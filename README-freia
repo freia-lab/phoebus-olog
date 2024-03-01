@@ -1,0 +1,11 @@
+How to create freia-olog certificate:
+
+Run the following command in src/main/resources/keystore directory:
+
+openssl pkcs12 -export -out freia-olog.p12 -inkey ~/freia-olog-cerificates/server.key -in ~/freia-olog-cerificates/freia-olog_physics_uu_se_cert.cer -certfile ~/freia-olog-cerificates/freia-olog_physics_uu_se_interm.cer 
+
+where:
+~/freia-olog-cerificates/server.key				- private key created when creating certificate request file *crt sent to CA
+~/freia-olog-cerificates/freia-olog_physics_uu_se_cert.cer	- Certificate only, PEM encoded received from CA
+~/freia-olog-cerificates/freia-olog_physics_uu_se_interm.cer	- Root/Intermediate(s) only, PEM encoded received from CA
+
