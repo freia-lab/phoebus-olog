@@ -27,6 +27,7 @@ import org.phoebus.olog.entity.Attachment;
 import org.phoebus.olog.entity.Log;
 import org.phoebus.olog.entity.Log.LogBuilder;
 import org.phoebus.olog.entity.SearchResult;
+import org.phoebus.olog.entity.Event;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +48,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Repository
 public class LogRepository implements CrudRepository<Log, String> {
@@ -75,7 +77,20 @@ public class LogRepository implements CrudRepository<Log, String> {
     public <S extends Log> S save(S log) {
         try {
             Long id = generator.getID();
-            LogBuilder validatedLog = LogBuilder.createLog(log).id(id).createDate(Instant.now());
+            // Create an AtomicReference to hold the value of tstamp
+            AtomicReference<Instant> tstampRef = new AtomicReference<>(Instant.now());
+	    List<Event> eventList = log.getEvents();
+	    if (eventList != null) {
+	    	for (Event event : eventList) {
+            		if ("OriginalCreatedDate".equals(event.getName())) {
+                		tstampRef.set(event.getInstant());
+				break;
+            		}
+		}	
+            }
+	    Instant tstamp = tstampRef.get(); // Get the value from the AtomicReference
+	    logger.log(Level.INFO, () -> "FREIA: Entry id " + id + " created at " + tstamp);
+            LogBuilder validatedLog = LogBuilder.createLog(log).id(id).createDate(tstamp);
             if (log.getAttachments() != null && !log.getAttachments().isEmpty()) {
                 Set<Attachment> createdAttachments = new HashSet<>();
                 log.getAttachments().stream().filter(attachment -> attachment.getAttachment() != null).forEach(attachment ->
