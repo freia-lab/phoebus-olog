@@ -81,13 +81,13 @@ public class LogRepository implements CrudRepository<Log, String> {
             AtomicReference<Instant> tstampRef = new AtomicReference<>(Instant.now());
 	    List<Event> eventList = log.getEvents();
 	    if (eventList != null) {
-	    	for (Event event : eventList) {
-            		if ("OriginalCreatedDate".equals(event.getName())) {
-                		tstampRef.set(event.getInstant());
-				break;
-            		}
+		for (Event event : eventList) {
+		    if ("OriginalCreatedDate".equals(event.getName())) {
+			tstampRef.set(event.getInstant());
+			break;
+		    }
 		}	
-            }
+	    }
 	    Instant tstamp = tstampRef.get(); // Get the value from the AtomicReference
 	    logger.log(Level.INFO, () -> "FREIA: Entry id " + id + " created at " + tstamp);
             LogBuilder validatedLog = LogBuilder.createLog(log).id(id).createDate(tstamp);
