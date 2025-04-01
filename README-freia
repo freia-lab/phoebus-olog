@@ -9,3 +9,8 @@ where:
 ~/freia-olog-cerificates/freia-olog_physics_uu_se_cert.cer	- Certificate only, PEM encoded received from CA
 ~/freia-olog-cerificates/freia-olog_physics_uu_se_interm.cer	- Root/Intermediate(s) only, PEM encoded received from CA
 
+The new certificate received from ITS (Cert.pem) was used to create freia-olog.p12 (pw: password):
+
+openssl pkcs12 -export -in Cert.pem -inkey server.key -out freia-olog.p12 -name cf                            
+Enter Export Password:
+Verifying - Enter Export Password:
